@@ -12,7 +12,7 @@ async function pixabayFetch(searchValue) {
     per_page: 12,
   });
   const searchResponse = await fetch(`${BASE_URL}/?${searchParams}`);
-  console.log(searchResponse.json());
+
   if (searchResponse.ok) {
     return searchResponse.json();
   }

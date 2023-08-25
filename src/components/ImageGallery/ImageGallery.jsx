@@ -1,9 +1,10 @@
-{
-  /* <ul class="gallery">
-  <!-- Набор <li> с изображениями -->
-</ul> */
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+function ImageGallery({ children }) {
+  return <ul>{children}</ul>;
 }
 
-import React, { Component } from 'react';
-import { Formik } from 'formik';
-import * as yup from 'yup';
+ImageGallery.propTypes = { children: PropTypes.element.isRequired };
+
+export default ImageGallery;
