@@ -1,8 +1,23 @@
 import React, { Component } from 'react';
 import { nanoid } from 'nanoid';
+import pixabayFetch, { resetPage } from '../Services/Pixabay';
 
 class App extends Component {
-  state = {};
+  state = {
+    photos: [],
+    searchQuery: '',
+    status: 'idle',
+    showModal: 'false',
+    clickedImage: {},
+  };
+
+  async componentDidUpdate(prevProps, prevState) {
+    if (this.state.status === 'pending') {
+      const data = await pixabayFetch(this.state.searchQuery).then(
+        this.setState({ status: 'loading' })
+      );
+    }
+  }
 
   render() {
     return (
@@ -15,9 +30,7 @@ class App extends Component {
           fontSize: 40,
           color: '#010101',
         }}
-      >
-        React homework template
-      </div>
+      ></div>
     );
   }
 }
