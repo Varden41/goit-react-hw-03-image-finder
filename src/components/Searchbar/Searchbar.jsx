@@ -11,24 +11,6 @@ import {
 } from './Searchbar.styled';
 
 class SearchBar extends Component {
-  // handleNameChanger = event => {
-  //   this.setState({ searchQuery: event.currentTarget.value.toLowerCase() });
-  // };
-
-  // handleSubmit = event => {
-  //   event.preventDefault();
-  //   if (this.state.searchQuery.trim() === '') {
-  //     alert('Empty Input');
-  //     return;
-  //   }
-  //   this.props.onSubmit(this.state.searchQuery);
-  //   this.setState({ searchQuery: '' });
-  // };
-
-  // onHandleSubmit = (values, { resetForm }) => {
-  //   this.props.onSubmit(values.name, values.number);
-  //   resetForm();
-  // };
   handleSubmit = (values, { resetForm }) => {
     const { onSubmit } = this.props;
     onSubmit(values.search);

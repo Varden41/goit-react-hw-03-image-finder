@@ -1,34 +1,37 @@
 import React, { Component } from 'react';
 import { createPortal } from 'react-dom';
 import pixabayFetch, { resetPage } from '../Services/Pixabay';
+import { Circles } from 'react-loader-spinner';
 import SearchBar from './Searchbar/Searchbar';
 import ImageGalleryItem from './ImageGalleryItem/ImageGalleryItem';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
-import { Circles } from 'react-loader-spinner';
+import Modal from './Modal/Modal';
 
 class App extends Component {
   state = {
     photos: [],
     searchQuery: '',
     status: 'idle',
-    showModal: 'false',
+    showModal: false,
     activeImage: {},
   };
 
   async componentDidUpdate(prevProps, prevState) {
-    if (this.state.searchQuery === '') {
-      alert('Search field is empty!');
-      return;
-    }
     if (this.state.status === 'pending') {
       const data = await pixabayFetch(this.state.searchQuery).then(
         this.setState({ status: 'loading' })
       );
+      if (this.state.searchQuery === '') {
+        alert('Search field is empty!');
+        this.setState({ status: 'idle' });
+        return;
+      }
       if (prevState.searchQuery === this.state.searchQuery) {
         this.setState({ status: 'loaded' });
         return;
       }
+
       if (data.hits.length === 12) {
         return this.setState(
           prevState.searchQuery !== this.state.searchQuery
@@ -58,6 +61,9 @@ class App extends Component {
       );
     }
   }
+  onCloseModal = () => {
+    this.setState({ showModal: false });
+  };
 
   onLoadMore = () => {
     this.setState({ status: 'pending' });
@@ -68,17 +74,22 @@ class App extends Component {
     resetPage();
   };
 
+  handleImageClick = focusedImage => {
+    this.setState({ activeImage: focusedImage, showModal: true });
+  };
+
   render() {
+    const { showModal, photos, status } = this.state;
     return (
       <>
         <SearchBar onSubmit={this.handleFormSubmit} />
         <ImageGallery>
           <ImageGalleryItem
-            photos={this.state.photos}
-            status={this.state.status}
+            photos={photos}
+            handleImageClick={this.handleImageClick}
           />
         </ImageGallery>
-        {this.state.status === 'loading' && (
+        {status === 'loading' && (
           <Circles
             height="80"
             width="80"
@@ -89,10 +100,13 @@ class App extends Component {
             visible={true}
           />
         )}
-        {this.state.status === 'rejected' &&
-          alert('Sorry pal, no pictures for you today')}
-        {this.state.status === 'loaded' && (
-          <Button onLoadMore={this.onLoadMore} />
+        {status === 'rejected' && alert('Sorry pal, no pictures for you today')}
+        {status === 'loaded' && <Button onLoadMore={this.onLoadMore} />}
+        {showModal && (
+          <Modal
+            photo={this.state.activeImage}
+            onCloseModal={this.onCloseModal}
+          />
         )}
       </>
     );
