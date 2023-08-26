@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { GalleryList } from './ImageGallery.styled';
 
 function ImageGallery({ children }) {
-  return <ul>{children}</ul>;
+  return <GalleryList>{children}</GalleryList>;
 }
 
 ImageGallery.propTypes = { children: PropTypes.element.isRequired };

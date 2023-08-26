@@ -14,6 +14,7 @@ async function pixabayFetch(searchValue) {
   const searchResponse = await fetch(`${BASE_URL}/?${searchParams}`);
 
   if (searchResponse.ok) {
+    PAGE_COUNTER += 1;
     return searchResponse.json();
   }
   return Promise.reject(new Error(`ERROR`));
