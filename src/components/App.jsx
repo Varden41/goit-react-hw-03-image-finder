@@ -27,11 +27,6 @@ class App extends Component {
         this.setState({ status: 'idle' });
         return;
       }
-      if (prevState.searchQuery === this.state.searchQuery) {
-        this.setState({ status: 'loaded' });
-        return;
-      }
-
       if (data.hits.length === 12) {
         return this.setState(
           prevState.searchQuery !== this.state.searchQuery
@@ -102,12 +97,14 @@ class App extends Component {
         )}
         {status === 'rejected' && alert('Sorry pal, no pictures for you today')}
         {status === 'loaded' && <Button onLoadMore={this.onLoadMore} />}
-        {showModal && (
-          <Modal
-            photo={this.state.activeImage}
-            onCloseModal={this.onCloseModal}
-          />
-        )}
+        {showModal &&
+          createPortal(
+            <Modal
+              photo={this.state.activeImage}
+              onCloseModal={this.onCloseModal}
+            ></Modal>,
+            document.body
+          )}
       </>
     );
   }
