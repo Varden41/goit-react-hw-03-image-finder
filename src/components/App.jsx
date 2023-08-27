@@ -22,14 +22,13 @@ class App extends Component {
       prevState.searchQuery !== this.state.searchQuery ||
       (prevState.page !== this.state.page && this.state.page > 1)
     ) {
-      this.setState({ status: 'loading' });
       this.pixabayRender();
     }
   }
 
   pixabayRender = () => {
     const { searchQuery, page } = this.state;
-
+    this.setState({ status: 'loading' });
     pixabayFetch(searchQuery, page)
       .then(data => {
         if (data.hits.length === 0) {
