@@ -3,7 +3,6 @@ import { createPortal } from 'react-dom';
 import pixabayFetch from '../Services/Pixabay';
 import { Circles } from 'react-loader-spinner';
 import SearchBar from './Searchbar/Searchbar';
-import ImageGalleryItem from './ImageGalleryItem/ImageGalleryItem';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
 import Modal from './Modal/Modal';
@@ -28,57 +27,8 @@ class App extends Component {
     }
   }
 
-  // async componentDidUpdate(_, prevState) {
-  //   if (
-  //     prevState.searchQuery !== this.state.searchQuery ||
-  //     prevState.page !== this.state.page
-  //   ) {
-  //     const data = await pixabayFetch(this.state.searchQuery).then(
-  //       this.setState({ status: 'loading' })
-  //     );
-  //   }
-
-  //   if (this.state.status === 'pending') {
-  //     const data = await pixabayFetch(this.state.searchQuery).then(
-  //       this.setState({ status: 'loading' })
-  //     );
-  //     if (this.state.searchQuery === '') {
-  //       alert('Search field is empty!');
-  //       this.setState({ status: 'idle' });
-  //       return;
-  //     }
-  //     if (data.hits.length === 12) {
-  //       return this.setState(
-  //         prevState.searchQuery !== this.state.searchQuery
-  //           ? {
-  //               photos: data.hits,
-  //               status: 'loaded',
-  //             }
-  //           : {
-  //               photos: [...prevState.photos, ...data.hits],
-  //               status: 'loaded',
-  //             }
-  //       );
-  //     }
-  //     if (data.hits.length === 0) {
-  //       return this.setState({ photos: [], status: 'rejected' });
-  //     }
-  //     return this.setState(
-  //       prevState.searchQuery !== this.state.searchQuery
-  //         ? {
-  //             photos: data.hits,
-  //             status: 'idle',
-  //           }
-  //         : {
-  //             photos: [...prevState.photos, ...data.hits],
-  //             status: 'idle',
-  //           }
-  //     );
-  //   }
-  // }
-
   pixabayRender = () => {
-    const { searchQuery, page, status } = this.state;
+    const { searchQuery, page } = this.state;
 
     pixabayFetch(searchQuery, page)
       .then(data => {
