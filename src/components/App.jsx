@@ -15,12 +15,13 @@ class App extends Component {
     showModal: false,
     activeImage: {},
     page: 1,
+    showBtn: false,
   };
 
   async componentDidUpdate(_, prevState) {
     if (
       prevState.searchQuery !== this.state.searchQuery ||
-      (prevState.page !== this.state.page && this.state.page > 1)
+      prevState.page !== this.state.page
     ) {
       this.pixabayRender();
     }
@@ -37,6 +38,7 @@ class App extends Component {
         this.setState(prevState => ({
           photos: [...prevState.photos, ...data.hits],
           status: 'loaded',
+          showBtn: page < Math.ceil(data.totalHits / 12),
         }));
       })
       .catch(error => {
@@ -61,14 +63,14 @@ class App extends Component {
   };
 
   render() {
-    const { showModal, photos, status } = this.state;
+    const { showModal, photos, status, showBtn } = this.state;
     return (
       <>
         <SearchBar onSubmit={this.handleFormSubmit} />
         <ImageGallery
           photos={photos}
           handleImageClick={this.handleImageClick}
-        ></ImageGallery>
+        />
         {status === 'loading' && (
           <Circles
             height="80"
@@ -81,7 +83,7 @@ class App extends Component {
           />
         )}
         {status === 'rejected' && alert('Sorry pal, no pictures for you today')}
-        {status === 'loaded' && <Button onLoadMore={this.onLoadMore} />}
+        {showBtn && <Button onLoadMore={this.onLoadMore} />}
         {showModal &&
           createPortal(
             <Modal
