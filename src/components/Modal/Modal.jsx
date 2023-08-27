@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
 import { Overlay, ModalBox } from './Modal.styled';
+
+const ModalRoot = document.querySelector('#modal-root');
 
 class Modal extends Component {
   componentDidMount() {
@@ -20,12 +23,13 @@ class Modal extends Component {
 
   render() {
     const { photo } = this.props;
-    return (
+    return createPortal(
       <Overlay onClick={this.handleClose}>
         <ModalBox>
           <img src={photo.largeImageURL} alt={photo.tags} />
         </ModalBox>
-      </Overlay>
+      </Overlay>,
+      ModalRoot
     );
   }
 }

@@ -84,14 +84,12 @@ class App extends Component {
         )}
         {status === 'rejected' && alert('Sorry pal, no pictures for you today')}
         {showBtn && <Button onLoadMore={this.onLoadMore} />}
-        {showModal &&
-          createPortal(
-            <Modal
-              photo={this.state.activeImage}
-              onCloseModal={this.onCloseModal}
-            ></Modal>,
-            document.body
-          )}
+        {showModal && (
+          <Modal
+            photo={this.state.activeImage}
+            onCloseModal={this.onCloseModal}
+          />
+        )}
       </>
     );
   }
