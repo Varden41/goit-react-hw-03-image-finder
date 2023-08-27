@@ -12,7 +12,7 @@ const ImageGallery = ({ photos, handleImageClick }) => {
             key={photo.id}
             src={photo.webformatURL}
             alt={photo.tags}
-            onClick={() => handleImageClick}
+            onClick={() => handleImageClick(photo)}
           />
         );
       })}
