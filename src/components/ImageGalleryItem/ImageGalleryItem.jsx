@@ -3,30 +3,18 @@ import PropTypes from 'prop-types';
 
 import { GalleryItem, ImageGalleryItemImage } from './ImageGalleryItem.styled';
 
-class ImageGalleryItem extends Component {
-  handleClick = photo => {
-    const { handleImageClick } = this.props;
-    handleImageClick(photo);
-  };
-  d;
-  render() {
-    const { photos } = this.props;
-    return photos.map(photo => {
-      return (
-        <GalleryItem key={photo.id} onClick={() => this.handleClick(photo)}>
-          <ImageGalleryItemImage
-            src={photo.webformatURL}
-            alt={photo.tags}
-            tabIndex="0"
-          />
-        </GalleryItem>
-      );
-    });
-  }
-}
+const ImageGalleryItem = ({ src, alt, onClick }) => {
+  return (
+    <GalleryItem onClick={() => onClick(src)}>
+      <ImageGalleryItemImage src={src} alt={alt} />
+    </GalleryItem>
+  );
+};
 
 ImageGalleryItem.propTypes = {
-  photos: PropTypes.array.isRequired,
+  src: PropTypes.string.isRequired,
+  alt: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
 };
 
 export default ImageGalleryItem;

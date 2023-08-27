@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { createPortal } from 'react-dom';
-import pixabayFetch, { resetPage } from '../Services/Pixabay';
+import pixabayFetch from '../Services/Pixabay';
 import { Circles } from 'react-loader-spinner';
 import SearchBar from './Searchbar/Searchbar';
 import ImageGalleryItem from './ImageGalleryItem/ImageGalleryItem';
@@ -15,58 +15,96 @@ class App extends Component {
     status: 'idle',
     showModal: false,
     activeImage: {},
+    page: 1,
   };
 
-  async componentDidUpdate(prevProps, prevState) {
-    if (this.state.status === 'pending') {
-      const data = await pixabayFetch(this.state.searchQuery).then(
-        this.setState({ status: 'loading' })
-      );
-      if (this.state.searchQuery === '') {
-        alert('Search field is empty!');
-        this.setState({ status: 'idle' });
-        return;
-      }
-      if (data.hits.length === 12) {
-        return this.setState(
-          prevState.searchQuery !== this.state.searchQuery
-            ? {
-                photos: data.hits,
-                status: 'loaded',
-              }
-            : {
-                photos: [...prevState.photos, ...data.hits],
-                status: 'loaded',
-              }
-        );
-      }
-      if (data.hits.length === 0) {
-        return this.setState({ photos: [], status: 'rejected' });
-      }
-      return this.setState(
-        prevState.searchQuery !== this.state.searchQuery
-          ? {
-              photos: data.hits,
-              status: 'idle',
-            }
-          : {
-              photos: [...prevState.photos, ...data.hits],
-              status: 'idle',
-            }
-      );
+  async componentDidUpdate(_, prevState) {
+    if (
+      prevState.searchQuery !== this.state.searchQuery ||
+      (prevState.page !== this.state.page && this.state.page > 1)
+    ) {
+      this.setState({ status: 'loading' });
+      this.pixabayRender();
     }
   }
+
+  // async componentDidUpdate(_, prevState) {
+  //   if (
+  //     prevState.searchQuery !== this.state.searchQuery ||
+  //     prevState.page !== this.state.page
+  //   ) {
+  //     const data = await pixabayFetch(this.state.searchQuery).then(
+  //       this.setState({ status: 'loading' })
+  //     );
+  //   }
+
+  //   if (this.state.status === 'pending') {
+  //     const data = await pixabayFetch(this.state.searchQuery).then(
+  //       this.setState({ status: 'loading' })
+  //     );
+  //     if (this.state.searchQuery === '') {
+  //       alert('Search field is empty!');
+  //       this.setState({ status: 'idle' });
+  //       return;
+  //     }
+  //     if (data.hits.length === 12) {
+  //       return this.setState(
+  //         prevState.searchQuery !== this.state.searchQuery
+  //           ? {
+  //               photos: data.hits,
+  //               status: 'loaded',
+  //             }
+  //           : {
+  //               photos: [...prevState.photos, ...data.hits],
+  //               status: 'loaded',
+  //             }
+  //       );
+  //     }
+  //     if (data.hits.length === 0) {
+  //       return this.setState({ photos: [], status: 'rejected' });
+  //     }
+  //     return this.setState(
+  //       prevState.searchQuery !== this.state.searchQuery
+  //         ? {
+  //             photos: data.hits,
+  //             status: 'idle',
+  //           }
+  //         : {
+  //             photos: [...prevState.photos, ...data.hits],
+  //             status: 'idle',
+  //           }
+  //     );
+  //   }
+  // }
+
+  pixabayRender = () => {
+    const { searchQuery, page, status } = this.state;
+
+    pixabayFetch(searchQuery, page)
+      .then(data => {
+        if (data.hits.length === 0) {
+          return this.setState({ status: 'rejected' });
+        }
+        this.setState(prevState => ({
+          photos: [...prevState.photos, ...data.hits],
+          status: 'loaded',
+        }));
+      })
+      .catch(error => {
+        this.setState({ status: 'rejected' });
+      });
+  };
+
   onCloseModal = () => {
     this.setState({ showModal: false });
   };
 
   onLoadMore = () => {
-    this.setState({ status: 'pending' });
+    this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
   handleFormSubmit = searchValue => {
-    this.setState({ status: 'pending', searchQuery: searchValue });
-    resetPage();
+    this.setState({ page: 1, searchQuery: searchValue, photos: [] });
   };
 
   handleImageClick = focusedImage => {
@@ -78,12 +116,10 @@ class App extends Component {
     return (
       <>
         <SearchBar onSubmit={this.handleFormSubmit} />
-        <ImageGallery>
-          <ImageGalleryItem
-            photos={photos}
-            handleImageClick={this.handleImageClick}
-          />
-        </ImageGallery>
+        <ImageGallery
+          photos={photos}
+          handleImageClick={this.handleImageClick}
+        ></ImageGallery>
         {status === 'loading' && (
           <Circles
             height="80"
