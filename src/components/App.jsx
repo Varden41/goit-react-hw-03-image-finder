@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { createPortal } from 'react-dom';
 import pixabayFetch from '../Services/Pixabay';
 import { Circles } from 'react-loader-spinner';
 import SearchBar from './Searchbar/Searchbar';
